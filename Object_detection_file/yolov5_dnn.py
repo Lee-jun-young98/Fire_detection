@@ -1,12 +1,14 @@
 import cv2
 import numpy as np
+import pyttsx3
+import time
 
 # Constants.
 INPUT_WIDTH = 640
 INPUT_HEIGHT = 640
-SCORE_THRESHOLD = 0.5
-NMS_THRESHOLD = 0.45
-CONFIDENCE_THRESHOLD = 0.45
+SCORE_THRESHOLD = 0.6
+NMS_THRESHOLD = 0.45 # 0.45
+CONFIDENCE_THRESHOLD = 0.45  # 0.45
  
 # Text parameters.
 FONT_FACE = cv2.FONT_HERSHEY_SIMPLEX
@@ -29,7 +31,7 @@ def draw_label(im, label, x, y):
 
     # Display text inside the rectangle.
     cv2.putText(im, label, (x, y + dim[1]), FONT_FACE, FONT_SCALE, YELLOW, THICKNESS, cv2.LINE_AA)
-
+    
 
 # preprocessing yolov5 model
 def pre_process(input_image, net):
@@ -86,22 +88,28 @@ def post_process(input_image, outputs):
           height = box[3]            
           # Draw bounding box.           
           cv2.rectangle(input_image, (left, top), (left + width, top + height), BLUE, 3*THICKNESS)
-          # Class label.                     
           label = "{}:{:.2f}".format(classes[class_ids[i]], confidences[i])             
+          # 소리 엔진을 초기화 한다.
+          engine = pyttsx3.init()
+          # 인식한 객체를 소리로 변환한다.
+          engine.say("Fire")
+          # 엔진을 실행하고 기다린다(얼마나 기다리는가?) 기다리는 시간을 조절 가능한가?
+          engine.runAndWait()
           # Draw label.            
           draw_label(input_image, label, left, top)
+          
     return input_image
 
 
 # main function
 if __name__=='__main__':
     # Load class names.
-    classesFile = "/home/ssyongbest/PycharmProjects/fire_detection_dnn/coco.names"
+    classesFile = "/home/a/Desktop/PycharmProjects/fire_detection_dnn/coco.names"
     classes = None
     with open(classesFile, 'rt') as f:
         classes = f.read().rstrip('\n').split('\n')
 
-    modelWeights = "/home/ssyongbest/PycharmProjects/fire_detection_dnn/best32_80.onnx"
+    modelWeights = "/home/a/Desktop/PycharmProjects/fire_detection_dnn/best32_80.onnx"
     net = cv2.dnn.readNet(modelWeights)
 
     capture = cv2.VideoCapture(0)
@@ -110,6 +118,7 @@ if __name__=='__main__':
     
     while True:    
         ret, frame = capture.read()
+        start_time = time.time()
         detections = pre_process(frame, net)
         img = post_process(frame.copy(), detections)
         cv2.imshow("VideoFrame", img)
@@ -118,8 +127,11 @@ if __name__=='__main__':
         # label = 'Inference time: %.2f ms' % (t * 1000.0/cv2.getTickFrequency())
         # print(label)
         # cv2.putText(img, label, (20, 40), FONT_FACE, FONT_SCALE, (0, 0, 255), THICKNESS, cv2.LINE_AA)
-        cv2.waitKey(1)
-            #Give theght files to the model and load the network using them.
+        cv2.waitKey(7)
+        end_time = time.time()
+        print('FPS:',1/(end_time-start_time))
+        start_time = end_time
+        #Give theght files to the model and load the network using them.
 
 
 
