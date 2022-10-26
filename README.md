@@ -63,5 +63,5 @@
 - [x]  Yolo 공부하기
 - [x]  Yolo 클래스 분류하기
 - [x]  Yolo 모델 경량화 하기
-- [ ]  Jetson Yolo 모델 연결하기
-- [ ]  opencv 카메라 연결해보기
+- [x]  Jetson Yolo 모델 연결하기
+- [x]  opencv 카메라 연결해보기
