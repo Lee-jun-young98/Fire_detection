@@ -1,67 +1,48 @@
-# Fire_detection
-# 화재 감지 로봇
+# Fire Detection
 
-# 데이터셋
-[열화상 카메라 이미지](https://aihub.or.kr/aidata/27710)
+카메라 영상에서 불꽃과 연기를 탐지하는 과정을 공부한 2022년 프로젝트입니다. 데이터 라벨 정리와 학습 실험, YOLOv5 ONNX 모델을 OpenCV DNN으로 실행하는 코드를 모아두었습니다.
 
-[화재 발생 예측 영상](https://aihub.or.kr/aidata/34121)
+## 남겨둔 코드
 
-[https://github.com/Megvii-BaseDetection/YOLOX](https://github.com/Megvii-BaseDetection/YOLOX)
+| 경로 | 내용 |
+| --- | --- |
+| [fire_code/](fire_code/) | 라벨 변환, 데이터 분할·샘플링, YOLOv5 학습·탐지 노트북 |
+| [fire_code/yolov5_dnn.py](fire_code/yolov5_dnn.py) | 카메라 입력, ONNX 추론, NMS 후처리, 탐지 상자 표시와 음성 알림 |
+| [Object_detection_file/](Object_detection_file/) | ONNX 모델, 클래스 목록, 추론 코드 사본 |
 
-- YOLOx를 통해 object detection
+당시 작업 기록에는 모델 경량화, Jetson 연결, OpenCV 카메라 연결을 진행한 내용이 남아 있습니다. 이 저장소에는 탐지 코드와 노트북이 중심으로 정리돼 있으며, 주행 제어나 로봇 전체 실행 절차는 포함돼 있지 않습니다.
 
-예시 사진)
+## 실행 전에
 
-![Untitled](https://user-images.githubusercontent.com/80506107/178093700-1019e16f-6e80-428b-b2ba-923bbe480ee3.png)
+오래된 실험 환경의 경로가 코드에 남아 있습니다. 그대로 실행하기보다 아래 항목을 먼저 확인해주세요.
 
+1. `yolov5_dnn.py`의 `classesFile`과 `modelWeights`를 현재 파일 위치에 맞춥니다.
+2. 클래스 목록의 순서와 개수가 사용할 ONNX 모델의 출력과 일치하는지 확인합니다.
+3. 카메라 번호와 `cv2.imshow`를 사용할 수 있는 환경을 확인합니다.
 
-[화재 발생 예측 데이터셋 설명](%E1%84%92%E1%85%AA%E1%84%8C%E1%85%A2%20%E1%84%80%E1%85%A1%E1%86%B7%E1%84%8C%E1%85%B5%20%E1%84%85%E1%85%A9%E1%84%87%E1%85%A9%E1%86%BA%20f99237b1fca84f51b2adc053d300c0a5/Untitled.pdf)
+추론 코드에 필요한 패키지는 `opencv-python`, `numpy`, `pyttsx3`입니다. 음성 출력에는 운영체제의 음성 엔진도 필요합니다.
 
-## 데이터 설명
+```bash
+python -m pip install opencv-python numpy pyttsx3
+python fire_code/yolov5_dnn.py
+```
 
-- label
-    1. 검정색 연기
-    2. 회색 연기
-    3. 흰색 연기
-    4. 화재(불꽃) 발생
-    5. 구름
-    6. 안개(연무)
-    7. 조명
-    8. 햇빛
-    9. 흔들림이 있는 흰색/회색/검정색 물체(object)
-    10. None
-    
-    1. 무관씬
-    
-![Untitled 1](https://user-images.githubusercontent.com/80506107/178093719-4241cf3f-89f6-43f3-aa66-906e1a759c8a.png)
+학습 노트북은 데이터와 당시 YOLO 환경을 별도로 준비해야 합니다. 원본 데이터는 저장소에 포함하지 않았고, 의존성 버전도 고정돼 있지 않습니다.
 
+## 데이터와 참고 자료
 
-# 논문
+- [AI Hub 열화상 카메라 이미지](https://aihub.or.kr/aidata/27710)
+- [AI Hub 화재 발생 예측 영상](https://aihub.or.kr/aidata/34121)
+- [YOLOv5 학습 참고 글](https://developeryoung.tistory.com/15?category=879762)
+- [초기 조사에 참고한 YOLOX](https://github.com/Megvii-BaseDetection/YOLOX)
 
-- [비디오 기반 딥러닝 융합 알고리즘에 의한 화재 감지 시스템에 관한 연구](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE10605150)
-    - CNN 기반 알고리즘, Alexnet 사용
-    - accuracy는 97%, 음성 오탐 비율은 3.5%, 양성 오탐 비율은 2.4%
-- [딥러닝기반 화재감지 시스템](https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE09371910)
-- [S-FDS : 퍼지로직과 딥러닝 통합 기반의 스마트 화재감지 시스템](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE07164790)
-- [Convolutional Neural Network를 활용한 영상 기반의 화재 감지에 관한 연구](https://eds.s.ebscohost.com/eds/detail/detail?vid=4&sid=c030809a-2755-42b5-a7ac-94081b991abd%40redis&bdata=Jmxhbmc9a28mc2l0ZT1lZHMtbGl2ZQ%3d%3d#AN=edsker.000004392978&db=edsker)
-- [화재 감지 시스템을 위한 다중 센서 데이터 퓨전 알고리즘의 구현](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE09409711)
-- [라즈베리파이 자율 주행 소방차](https://github.com/tpy7723/Self-Driving-Fire-Truck)
-- [라즈베리파이 opencv 자율주행 소스 - Google Search](https://www.google.com/search?sxsrf=ALiCzsZnP7d8FSJB88BVD1dxPAEHQyVQqQ:1651475467671&q=%EB%9D%BC%EC%A6%88%EB%B2%A0%EB%A6%AC%ED%8C%8C%EC%9D%B4+opencv+%EC%9E%90%EC%9C%A8%EC%A3%BC%ED%96%89+%EC%86%8C%EC%8A%A4&sa=X&ved=2ahUKEwij--vEocD3AhUb82EKHSVlAjUQ1QJ6BAgfEAE&biw=1636&bih=935&dpr=1)
-- [NVIDIA JETSON NANO 배터리 전압 문제 솔류션](http://daddynkidsmakers.blogspot.com/2019/12/nvidia-jetson-nano.html)
+불꽃·연기뿐 아니라 구름, 안개, 조명 등 혼동하기 쉬운 장면도 함께 살펴봤습니다. 데이터 이용 조건은 각 배포처에서 확인해야 합니다.
 
-# 코드 참고
-- [yolov5 를 customize해서 나만의 object detection 모델을 만들어보기](https://developeryoung.tistory.com/15?category=879762)
+## 당시 기록
 
-# 진행사항
-2022-05-11 02, 07, 09 샘플 존재하지 않음
-2022-05-16 Train 데이터 label별로 모두 나눔
-2022-07-20 Yolo 데이터 학습
+- 2022-05-16: 학습 데이터를 라벨별로 분류
+- 2022-07-20: YOLO 학습 진행
 
-# 해야 할일
+![당시 탐지 예시](https://user-images.githubusercontent.com/80506107/178093700-1019e16f-6e80-428b-b2ba-923bbe480ee3.png)
 
-- [x]  로컬 설정하기
-- [x]  Yolo 공부하기
-- [x]  Yolo 클래스 분류하기
-- [x]  Yolo 모델 경량화 하기
-- [x]  Jetson Yolo 모델 연결하기
-- [x]  opencv 카메라 연결해보기
+현재 README에는 별도로 검증한 탐지 성능 수치를 적지 않았습니다. 다음에 다시 정리한다면 실행 환경과 클래스 구성을 먼저 맞추고, 오탐 사례와 추론 시간을 같은 조건에서 측정해보고 싶습니다.
